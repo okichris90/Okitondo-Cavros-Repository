@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Chris Okitondo &amp; Irene Cavros">
+<meta name="dcterms.date" content="2023-02-20">
+
+<title>Data Cleaning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="processingfile_files/libs/clipboard/clipboard.min.js"></script>
+<script src="processingfile_files/libs/quarto-html/quarto.js"></script>
+<script src="processingfile_files/libs/quarto-html/popper.min.js"></script>
+<script src="processingfile_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="processingfile_files/libs/quarto-html/anchor.min.js"></script>
+<link href="processingfile_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="processingfile_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="processingfile_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="processingfile_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="processingfile_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Cleaning</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Chris Okitondo &amp; Irene Cavros </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 20, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="setup" class="level1">
+<h1>Setup</h1>
+<p><em>Load needed packages. Don’t forget to make sure they are installed. If not, please install them before moving forward in attempting to run any code.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) <span class="co">#for loading Excel files</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(writexl) <span class="co">#for writing Excel files</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven) <span class="co"># for loading SPSS file</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co">#for data processing/cleaning</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co">#for data processing/cleaning</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr) <span class="co">#for nice visualization of data </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co">#to set paths</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-loading" class="level1">
+<h1>Data loading</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_location <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw_data"</span>,<span class="st">"nhis_00015.sav"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rawdata <span class="ot">&lt;-</span> haven<span class="sc">::</span> <span class="fu">read_sav</span>(data_location)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data1<span class="ot">&lt;-</span> rawdata</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="check-data" class="level1">
+<h1>Check data</h1>
+<p><em>We are checking the data using several methods.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 792,916
+Columns: 30
+$ YEAR         &lt;dbl&gt; 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 201…
+$ SERIAL       &lt;dbl&gt; 1, 1, 2, 3, 5, 5, 6, 6, 7, 8, 8, 8, 8, 9, 10, 10, 11, 11,…
+$ STRATA       &lt;dbl&gt; 6109, 6109, 6167, 6042, 6117, 6117, 6035, 6035, 6118, 629…
+$ PSU          &lt;dbl&gt; 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 2, …
+$ NHISHID      &lt;chr&gt; "00002012000001", "00002012000001", "00002012000002", "00…
+$ NHISPID      &lt;chr&gt; "0020120000010101", "0020120000010102", "0020120000020101…
+$ AGE          &lt;dbl&gt; 45, 44, 79, 64, 45, 47, 22, 25, 64, 55, 46, 15, 13, 64, 3…
+$ SEX          &lt;dbl+lbl&gt; 2, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 1, 2, 1, 2, 1, 2,…
+$ RACENEW      &lt;dbl+lbl&gt; 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100…
+$ HISPYN       &lt;dbl+lbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ ARMFEV       &lt;dbl+lbl&gt; 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,  0,  0, 1…
+$ EDUC         &lt;dbl+lbl&gt; 302, 111, 201, 501, 301, 301, 301, 302, 400, 201, 301…
+$ EMPSTAT      &lt;dbl+lbl&gt; 220, 112, 220, 220, 220, 111, 200, 111, 111, 112, 111…
+$ PAIDSICK     &lt;dbl+lbl&gt; 0, 1, 0, 2, 2, 0, 0, 1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 2,…
+$ INCFAM07ON   &lt;dbl+lbl&gt; 11, 11, 11, 22, 23, 23, 22, 22, 12, 24, 24, 24, 24, 1…
+$ POVERTY      &lt;dbl+lbl&gt; 14, 14, 22, 37, 37, 37, 34, 34, 35, 37, 37, 37, 37, 2…
+$ HEALTH       &lt;dbl+lbl&gt; 5, 1, 4, 2, 4, 2, 3, 3, 3, 2, 3, 1, 1, 4, 1, 1, 2, 2,…
+$ BMICAT       &lt;dbl+lbl&gt; 9, 4, 9, 4, 3, 9, 9, 2, 4, 9, 9, 9, 9, 3, 2, 9, 9, 2,…
+$ USUALPL      &lt;dbl+lbl&gt; 0, 1, 0, 2, 2, 0, 0, 2, 2, 0, 0, 2, 0, 2, 2, 0, 0, 2,…
+$ DELAYCOST    &lt;dbl+lbl&gt; 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ HINOTCOVE    &lt;dbl+lbl&gt; 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ VACFLU12M    &lt;dbl+lbl&gt; 0, 1, 0, 1, 1, 0, 0, 2, 2, 0, 0, 1, 0, 1, 1, 0, 0, 2,…
+$ ASTHMAEV     &lt;dbl+lbl&gt; 0, 1, 0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 0, 1, 1, 0, 0, 1,…
+$ CANCEREV     &lt;dbl+lbl&gt; 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1,…
+$ CHEARTDIEV   &lt;dbl+lbl&gt; 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1,…
+$ ALCSTAT1     &lt;dbl+lbl&gt; 0, 3, 0, 2, 3, 0, 0, 3, 3, 0, 0, 0, 0, 3, 1, 0, 0, 3,…
+$ SMOKESTATUS2 &lt;dbl+lbl&gt;  0, 11,  0, 30, 30,  0,  0, 30, 20,  0,  0,  0,  0, 1…
+$ WORFREQ      &lt;dbl+lbl&gt; 0, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 0, 3, 4, 0, 0, 4,…
+$ DEPFREQ      &lt;dbl+lbl&gt; 0, 0, 0, 0, 5, 0, 0, 0, 2, 0, 0, 0, 0, 4, 5, 0, 0, 4,…
+$ CVDTESTRSLT  &lt;dbl+lbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR          SERIAL          STRATA          PSU       
+ Min.   :2012   Min.   :    1   Min.   : 100   Min.   :  1.0  
+ 1st Qu.:2013   1st Qu.:12326   1st Qu.:6060   1st Qu.:  1.0  
+ Median :2015   Median :24618   Median :6212   Median :  2.0  
+ Mean   :2016   Mean   :25791   Mean   :5577   Mean   : 15.5  
+ 3rd Qu.:2017   3rd Qu.:38527   3rd Qu.:7108   3rd Qu.: 22.0  
+ Max.   :2021   Max.   :60347   Max.   :7151   Max.   :164.0  
+                                                              
+   NHISHID            NHISPID               AGE              SEX       
+ Length:792916      Length:792916      Min.   :  0.00   Min.   :1.000  
+ Class :character   Class :character   1st Qu.: 18.00   1st Qu.:1.000  
+ Mode  :character   Mode  :character   Median : 39.00   Median :2.000  
+                                       Mean   : 39.17   Mean   :1.518  
+                                       3rd Qu.: 58.00   3rd Qu.:2.000  
+                                       Max.   :999.00   Max.   :9.000  
+                                                                       
+    RACENEW          HISPYN          ARMFEV            EDUC      
+ Min.   :100.0   Min.   :1.000   Min.   : 0.000   Min.   :  0.0  
+ 1st Qu.:100.0   1st Qu.:1.000   1st Qu.:10.000   1st Qu.:113.0  
+ Median :100.0   Median :1.000   Median :10.000   Median :201.0  
+ Mean   :155.1   Mean   :1.196   Mean   : 8.861   Mean   :246.2  
+ 3rd Qu.:100.0   3rd Qu.:1.000   3rd Qu.:10.000   3rd Qu.:303.0  
+ Max.   :999.0   Max.   :2.000   Max.   :99.000   Max.   :999.0  
+                                                                 
+    EMPSTAT         PAIDSICK        INCFAM07ON       POVERTY     
+ Min.   :  0.0   Min.   :0.0000   Min.   :10.00   Min.   :11.00  
+ 1st Qu.:100.0   1st Qu.:0.0000   1st Qu.:11.00   1st Qu.:23.00  
+ Median :111.0   Median :0.0000   Median :22.00   Median :33.00  
+ Mean   :120.9   Mean   :0.5634   Mean   :24.69   Mean   :34.49  
+ 3rd Qu.:200.0   3rd Qu.:1.0000   3rd Qu.:24.00   3rd Qu.:37.00  
+ Max.   :999.0   Max.   :9.0000   Max.   :99.00   Max.   :99.00  
+                                  NA's   :37743                  
+     HEALTH          BMICAT         USUALPL        DELAYCOST      HINOTCOVE    
+ Min.   :1.000   Min.   :0.000   Min.   :0.000   Min.   :1.00   Min.   :1.000  
+ 1st Qu.:1.000   1st Qu.:3.000   1st Qu.:0.000   1st Qu.:1.00   1st Qu.:1.000  
+ Median :2.000   Median :9.000   Median :1.000   Median :1.00   Median :1.000  
+ Mean   :2.144   Mean   :6.397   Mean   :1.033   Mean   :1.08   Mean   :1.181  
+ 3rd Qu.:3.000   3rd Qu.:9.000   3rd Qu.:2.000   3rd Qu.:1.00   3rd Qu.:1.000  
+ Max.   :9.000   Max.   :9.000   Max.   :9.000   Max.   :9.00   Max.   :9.000  
+                                                                               
+   VACFLU12M         ASTHMAEV         CANCEREV        CHEARTDIEV   
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
+ Median :1.0000   Median :1.0000   Median :0.0000   Median :0.000  
+ Mean   :0.8516   Mean   :0.6041   Mean   :0.4464   Mean   :0.429  
+ 3rd Qu.:2.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.000  
+ Max.   :9.0000   Max.   :9.0000   Max.   :9.0000   Max.   :9.000  
+                                                                   
+    ALCSTAT1      SMOKESTATUS2      WORFREQ         DEPFREQ     
+ Min.   :0.00    Min.   : 0.00   Min.   :0.000   Min.   :0.000  
+ 1st Qu.:0.00    1st Qu.: 0.00   1st Qu.:0.000   1st Qu.:0.000  
+ Median :0.00    Median : 0.00   Median :0.000   Median :0.000  
+ Mean   :0.92    Mean   :10.15   Mean   :1.102   Mean   :1.261  
+ 3rd Qu.:2.00    3rd Qu.:20.00   3rd Qu.:2.000   3rd Qu.:3.000  
+ Max.   :9.00    Max.   :90.00   Max.   :9.000   Max.   :9.000  
+ NA's   :78933                                                  
+  CVDTESTRSLT    
+ Min.   :0.0     
+ 1st Qu.:0.0     
+ Median :0.0     
+ Mean   :0.4     
+ 3rd Qu.:1.0     
+ Max.   :9.0     
+ NA's   :717815  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 30
+   YEAR SERIAL STRATA   PSU NHISHID      NHISPID   AGE SEX     RACENEW   HISPYN 
+  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;dbl&gt; &lt;dbl+l&gt; &lt;dbl+lbl&gt; &lt;dbl+l&gt;
+1  2012      1   6109     1 00002012000… 002012…    45 2 [Fem… 100 [Whi… 1 [No,…
+2  2012      1   6109     1 00002012000… 002012…    44 1 [Mal… 100 [Whi… 1 [No,…
+3  2012      2   6167     2 00002012000… 002012…    79 2 [Fem… 100 [Whi… 1 [No,…
+4  2012      3   6042     2 00002012000… 002012…    64 2 [Fem… 100 [Whi… 1 [No,…
+5  2012      5   6117     2 00002012000… 002012…    45 2 [Fem… 100 [Whi… 1 [No,…
+6  2012      5   6117     2 00002012000… 002012…    47 1 [Mal… 100 [Whi… 1 [No,…
+# … with 20 more variables: ARMFEV &lt;dbl+lbl&gt;, EDUC &lt;dbl+lbl&gt;,
+#   EMPSTAT &lt;dbl+lbl&gt;, PAIDSICK &lt;dbl+lbl&gt;, INCFAM07ON &lt;dbl+lbl&gt;,
+#   POVERTY &lt;dbl+lbl&gt;, HEALTH &lt;dbl+lbl&gt;, BMICAT &lt;dbl+lbl&gt;, USUALPL &lt;dbl+lbl&gt;,
+#   DELAYCOST &lt;dbl+lbl&gt;, HINOTCOVE &lt;dbl+lbl&gt;, VACFLU12M &lt;dbl+lbl&gt;,
+#   ASTHMAEV &lt;dbl+lbl&gt;, CANCEREV &lt;dbl+lbl&gt;, CHEARTDIEV &lt;dbl+lbl&gt;,
+#   ALCSTAT1 &lt;dbl+lbl&gt;, SMOKESTATUS2 &lt;dbl+lbl&gt;, WORFREQ &lt;dbl+lbl&gt;,
+#   DEPFREQ &lt;dbl+lbl&gt;, CVDTESTRSLT &lt;dbl+lbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">data1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">792916</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NHISHID</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">368578</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NHISPID</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">792916</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">YEAR</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2015.51</td>
+<td style="text-align: right;">2.59</td>
+<td style="text-align: right;">2012</td>
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">2015</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">▇▇▆▅▃</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SERIAL</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">25790.60</td>
+<td style="text-align: right;">15874.44</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12326</td>
+<td style="text-align: right;">24618</td>
+<td style="text-align: right;">38527</td>
+<td style="text-align: right;">60347</td>
+<td style="text-align: left;">▇▇▇▆▃</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STRATA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5576.82</td>
+<td style="text-align: right;">2301.50</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">6060</td>
+<td style="text-align: right;">6212</td>
+<td style="text-align: right;">7108</td>
+<td style="text-align: right;">7151</td>
+<td style="text-align: left;">▂▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PSU</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">15.50</td>
+<td style="text-align: right;">25.80</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">164</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AGE</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">39.17</td>
+<td style="text-align: right;">28.56</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">999</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SEX</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.52</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RACENEW</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">155.06</td>
+<td style="text-align: right;">129.81</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">999</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HISPYN</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: right;">0.40</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARMFEV</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8.86</td>
+<td style="text-align: right;">8.36</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EDUC</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">246.17</td>
+<td style="text-align: right;">161.71</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">201</td>
+<td style="text-align: right;">303</td>
+<td style="text-align: right;">999</td>
+<td style="text-align: left;">▆▇▅▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EMPSTAT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">120.94</td>
+<td style="text-align: right;">109.42</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">111</td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">999</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PAIDSICK</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">INCFAM07ON</td>
+<td style="text-align: right;">37743</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: right;">24.69</td>
+<td style="text-align: right;">23.11</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">POVERTY</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">34.49</td>
+<td style="text-align: right;">20.24</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: left;">▅▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HEALTH</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.14</td>
+<td style="text-align: right;">1.07</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▅▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BMICAT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6.40</td>
+<td style="text-align: right;">3.16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▁▃▂▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">USUALPL</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.03</td>
+<td style="text-align: right;">1.05</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DELAYCOST</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.08</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HINOTCOVE</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.18</td>
+<td style="text-align: right;">0.80</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VACFLU12M</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ASTHMAEV</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CANCEREV</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CHEARTDIEV</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.43</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALCSTAT1</td>
+<td style="text-align: right;">78933</td>
+<td style="text-align: right;">0.90</td>
+<td style="text-align: right;">0.92</td>
+<td style="text-align: right;">1.40</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SMOKESTATUS2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">10.15</td>
+<td style="text-align: right;">13.83</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: left;">▇▅▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WORFREQ</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.10</td>
+<td style="text-align: right;">1.92</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DEPFREQ</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.26</td>
+<td style="text-align: right;">2.10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▂▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CVDTESTRSLT</td>
+<td style="text-align: right;">717815</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(data1, levels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$YEAR
+NULL
+
+$SERIAL
+NULL
+
+$STRATA
+NULL
+
+$PSU
+NULL
+
+$NHISHID
+NULL
+
+$NHISPID
+NULL
+
+$AGE
+NULL
+
+$SEX
+NULL
+
+$RACENEW
+NULL
+
+$HISPYN
+NULL
+
+$ARMFEV
+NULL
+
+$EDUC
+NULL
+
+$EMPSTAT
+NULL
+
+$PAIDSICK
+NULL
+
+$INCFAM07ON
+NULL
+
+$POVERTY
+NULL
+
+$HEALTH
+NULL
+
+$BMICAT
+NULL
+
+$USUALPL
+NULL
+
+$DELAYCOST
+NULL
+
+$HINOTCOVE
+NULL
+
+$VACFLU12M
+NULL
+
+$ASTHMAEV
+NULL
+
+$CANCEREV
+NULL
+
+$CHEARTDIEV
+NULL
+
+$ALCSTAT1
+NULL
+
+$SMOKESTATUS2
+NULL
+
+$WORFREQ
+NULL
+
+$DEPFREQ
+NULL
+
+$CVDTESTRSLT
+NULL</code></pre>
+</div>
+</div>
+<section id="observations-for-each-year-2012-2021" class="level3">
+<h3 class="anchored" data-anchor-id="observations-for-each-year-2012-2021">Observations for each year: 2012-2021</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>YEAR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  2012   2013   2014   2015   2016   2017   2018   2019   2020   2021 
+108131 104520 112053 103789  97169  78132  72831  41190  37358  37743 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="variables-for-analysis" class="level1">
+<h1>Variables for Analysis</h1>
+<p><em>Below is a summary of all of the variables in our dataset.</em></p>
+<ul>
+<li><p>Demographics: age, sex, race, ethnicity, veteran status</p></li>
+<li><p>Socioeconomic status: education level, total combined family income, employment status, paid sick leave as part of job benefits, ratio of family income to poverty threshold</p></li>
+<li><p>General health: perceived health status, categorical BMI Conditions: ever told had asthma, ever told had cancer, ever told had coronary heart disease</p></li>
+<li><p>Health behaviors: alcohol drinking status, cigarette smoking status Access to care: has usual place for medical care, medical care delayed due to cost (past 12 months)</p></li>
+<li><p>Health insurance: health insurance coverage status Mental health: anxiety level, depression level</p></li>
+<li><p>Flu vaccine: Had any flu vaccine, past 12 months. <strong>THIS IS OUR OUTCOME OF INTEREST!</strong></p></li>
+</ul>
+</section>
+<section id="re-categorizing-variables" class="level1">
+<h1>Re-categorizing variables</h1>
+<p><em>Here we will create the appropriate levels as we re-categorize variables.</em> <em>We will later rename some of the factor levels so that we do not have to remember or keep referring back to a data dictionary.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Age</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>AGE[data1<span class="sc">$</span>AGE <span class="sc">==</span> <span class="dv">997</span> <span class="sc">|</span> data1<span class="sc">$</span>AGE <span class="sc">==</span> <span class="dv">998</span> <span class="sc">|</span> data1<span class="sc">$</span>AGE <span class="sc">==</span> <span class="dv">999</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sex: 1 for Male and 2 for female, 7 or 9 for unknown</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>SEX[data1<span class="sc">$</span>SEX <span class="sc">==</span> <span class="dv">7</span> <span class="sc">|</span>  data1<span class="sc">$</span>SEX <span class="sc">==</span> <span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Race: White:1, Black:2, American Indiana/Alaska Native:3, Asian: 4</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>RACENEW[data1<span class="sc">$</span>RACENEW <span class="sc">==</span> <span class="dv">100</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>RACENEW[data1<span class="sc">$</span>RACENEW <span class="sc">==</span> <span class="dv">200</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>RACENEW[data1<span class="sc">$</span>RACENEW <span class="sc">==</span> <span class="dv">300</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>RACENEW[data1<span class="sc">$</span>RACENEW <span class="sc">==</span> <span class="dv">400</span>] <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>RACENEW[data1<span class="sc">$</span>RACENEW <span class="sc">&gt;</span> <span class="dv">400</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Hispanic: 1 for no, 2 for yes.</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>HISPYN[data1<span class="sc">$</span>HISPYN <span class="sc">==</span> <span class="dv">7</span> <span class="sc">|</span> data1<span class="sc">$</span>HISPYN <span class="sc">==</span> <span class="dv">8</span> <span class="sc">|</span> data1<span class="sc">$</span>HISPYN <span class="sc">==</span> <span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Veteran status: 1 for no. 2 for yes</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>ARMFEV[data1<span class="sc">$</span>ARMFEV<span class="sc">==</span><span class="dv">10</span><span class="sc">|</span>data1<span class="sc">$</span>ARMFEV <span class="sc">==</span> <span class="dv">11</span> <span class="sc">|</span>data1<span class="sc">$</span>ARMFEV <span class="sc">==</span> <span class="dv">12</span> ] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>ARMFEV[data1<span class="sc">$</span>ARMFEV <span class="sc">==</span> <span class="dv">20</span>]  <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>ARMFEV[data1<span class="sc">$</span>ARMFEV<span class="sc">==</span><span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>ARMFEV<span class="sc">==</span><span class="dv">97</span><span class="sc">|</span>data1<span class="sc">$</span>ARMFEV <span class="sc">==</span><span class="dv">98</span><span class="sc">|</span>data1<span class="sc">$</span>ARMFEV <span class="sc">==</span> <span class="dv">99</span> ]<span class="ot">&lt;-</span><span class="cn">NA</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co"># EDUCATION: 1 for less than HS, 2 for HS, 3 for Some college, 4 for bachelor, 5 for graduate degree</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EDUC[data1<span class="sc">$</span>EDUC <span class="sc">&gt;=</span> <span class="dv">102</span>  <span class="sc">|</span> data1<span class="sc">$</span>EDUC <span class="sc">&lt;=</span> <span class="dv">116</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EDUC[data1<span class="sc">$</span>EDUC <span class="sc">&gt;=</span> <span class="dv">200</span>  <span class="sc">|</span> data1<span class="sc">$</span>EDUC <span class="sc">&lt;=</span> <span class="dv">202</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EDUC[data1<span class="sc">$</span>EDUC <span class="sc">&gt;=</span> <span class="dv">300</span>  <span class="sc">|</span> data1<span class="sc">$</span>EDUC <span class="sc">&lt;=</span> <span class="dv">303</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EDUC[data1<span class="sc">$</span>EDUC <span class="sc">==</span> <span class="dv">400</span>] <span class="sc">|</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>logical(0)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EDUC[data1<span class="sc">$</span>EDUC <span class="sc">&gt;=</span> <span class="dv">500</span> <span class="sc">|</span> data1<span class="sc">$</span>EDUC <span class="sc">&lt;=</span> <span class="dv">505</span>] <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EDUC[data1<span class="sc">$</span>EDUC <span class="sc">&gt;</span> <span class="dv">505</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># EMPLOYMENT STATUS: 1 for not employed, 2 for employed, and 3 for not in labor force</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EMPSTAT[data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span> <span class="dv">200</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EMPSTAT[data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span> <span class="dv">100</span>  <span class="sc">|</span>  data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span> <span class="dv">111</span> <span class="sc">|</span> data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span> <span class="dv">112</span> <span class="sc">|</span> data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span> <span class="dv">120</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EMPSTAT[data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span><span class="dv">220</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>EMPSTAT[data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span> <span class="dv">0</span>  <span class="sc">|</span> data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span><span class="dv">900</span> <span class="sc">|</span> data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span><span class="dv">997</span> <span class="sc">|</span> data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span><span class="dv">998</span> <span class="sc">|</span> data1<span class="sc">$</span>EMPSTAT <span class="sc">==</span><span class="dv">999</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># PAID Sick: 1 for no, 2 for yes (0,9,8,7)</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>PAIDSICK[data1<span class="sc">$</span>PAIDSICK <span class="sc">==</span> <span class="dv">220</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>PAIDSICK[data1<span class="sc">$</span>PAIDSICK <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> data1<span class="sc">$</span>PAIDSICK <span class="sc">==</span> <span class="dv">7</span> <span class="sc">|</span> data1<span class="sc">$</span>PAIDSICK <span class="sc">==</span> <span class="dv">8</span> <span class="sc">|</span> data1<span class="sc">$</span>PAIDSICK <span class="sc">==</span> <span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co"># INCOME: 0 - 49,999: 1, 50,000-99,999: 2, AND +100k: 3</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>INCFAM07ON[data1<span class="sc">$</span>INCFAM07ON <span class="sc">&gt;=</span> <span class="dv">10</span>  <span class="sc">|</span> data1<span class="sc">$</span>INCFAM07ON <span class="sc">&lt;=</span> <span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>INCFAM07ON[data1<span class="sc">$</span>INCFAM07ON <span class="sc">&gt;=</span> <span class="dv">22</span>  <span class="sc">|</span> data1<span class="sc">$</span>INCFAM07ON <span class="sc">&lt;=</span> <span class="dv">23</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>INCFAM07ON[data1<span class="sc">$</span>INCFAM07ON <span class="sc">==</span> <span class="dv">24</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>INCFAM07ON[data1<span class="sc">$</span>INCFAM07ON <span class="sc">&gt;</span> <span class="dv">24</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>INCFAM07ON[data1<span class="sc">$</span>INCFAM07ON <span class="sc">==</span> <span class="dv">20</span> <span class="sc">|</span> data1<span class="sc">$</span>INCFAM07ON <span class="sc">==</span> <span class="dv">21</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co"># HEALTH STATUS: 1 Excellent, 2: Very good, 3: Good, 4: Fair, 5: Poor</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>HEALTH [data1<span class="sc">$</span>HEALTH  <span class="sc">&gt;</span> <span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co"># BMI CAT: 1 for BMI &lt; 18.5 (Underweight), 2 for 18.5 - 25 (Normalt), 3 for 25 - 30 (Overweight), 4 for &gt;30 (Obese)</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>BMICAT [data1<span class="sc">$</span>BMICAT  <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> data1<span class="sc">$</span>BMICAT  <span class="sc">==</span> <span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># USUAL PLACE FOR MEDICAL CARE: 1 for no, 2 and 3 for yes</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>USUALPL[data1<span class="sc">$</span>USUALPL <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>USUALPL[data1<span class="sc">$</span>USUALPL <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> data1<span class="sc">$</span>USUALPL <span class="sc">==</span> <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>USUALPL[data1<span class="sc">$</span>USUALPL<span class="sc">==</span><span class="dv">0</span> <span class="sc">|</span> data1<span class="sc">$</span>USUALPL<span class="sc">==</span><span class="dv">7</span><span class="sc">|</span> data1<span class="sc">$</span>USUALPL<span class="sc">==</span><span class="dv">8</span><span class="sc">|</span> data1<span class="sc">$</span>USUALPL<span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Medical care delayed due to cost: 1 for no, 2 for yes</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>DELAYCOST[data1<span class="sc">$</span>DELAYCOST <span class="sc">==</span><span class="dv">0</span> <span class="sc">|</span> data1<span class="sc">$</span>DELAYCOST <span class="sc">==</span><span class="dv">7</span><span class="sc">|</span> data1<span class="sc">$</span>DELAYCOST <span class="sc">==</span><span class="dv">8</span><span class="sc">|</span> data1<span class="sc">$</span>DELAYCOST<span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Health insurance coverage: 1 for no, 2 for yes</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>HINOTCOVE[data1<span class="sc">$</span>HINOTCOVE <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>HINOTCOVE[data1<span class="sc">$</span>HINOTCOVE <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>HINOTCOVE[data1<span class="sc">$</span>HINOTCOVE <span class="sc">==</span> <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>HINOTCOVE[data1<span class="sc">$</span>HINOTCOVE <span class="sc">==</span> <span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Had flu vaccine, past 12 months</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>VACFLU12M [data1<span class="sc">$</span>VACFLU12M  <span class="sc">==</span> <span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>VACFLU12M  <span class="sc">==</span> <span class="dv">3</span> <span class="sc">|</span>data1<span class="sc">$</span>VACFLU12M <span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>VACFLU12M <span class="sc">==</span><span class="dv">8</span><span class="sc">|</span>data1<span class="sc">$</span>VACFLU12M <span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Had covid, according to test</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>CVDTESTRSLT [data1<span class="sc">$</span>CVDTESTRSLT  <span class="sc">==</span> <span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>CVDTESTRSLT  <span class="sc">==</span> <span class="dv">3</span> <span class="sc">|</span>data1<span class="sc">$</span>CVDTESTRSLT <span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>CVDTESTRSLT <span class="sc">==</span><span class="dv">8</span><span class="sc">|</span>data1<span class="sc">$</span>CVDTESTRSLT <span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Ever told has Asthma: ASTHMAEV: 1 for no, 2 for yes</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>ASTHMAEV[data1<span class="sc">$</span>ASTHMAEV <span class="sc">==</span> <span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>ASTHMAEV<span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>ASTHMAEV<span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Ever told has Cancer: CANCEREV: 1 for no, 2 for yes</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>CANCEREV[data1<span class="sc">$</span>CANCEREV <span class="sc">==</span> <span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>CANCEREV<span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>CANCEREV<span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Ever told has CHD: CHEARTDIEV 1 for no, 2 for yes</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>CHEARTDIEV[data1<span class="sc">$</span>CHEARTDIEV<span class="sc">==</span><span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>CHEARTDIEV<span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>CHEARTDIEV<span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="co"># ALCSTAT1: Alcohol drinking: 1 for no drinker, 2 for former drinker, 3 for current drinker</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>ALCSTAT1 [data1<span class="sc">$</span>ALCSTAT1 <span class="sc">==</span><span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>ALCSTAT1 <span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Smoking status: 1 for no smoker, 2 for former smoker, 3 for current smoker</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>SMOKESTATUS2[data1<span class="sc">$</span>SMOKESTATUS2 <span class="sc">==</span> <span class="dv">10</span><span class="sc">|</span>data1<span class="sc">$</span>SMOKESTATUS2  <span class="sc">==</span> <span class="dv">11</span><span class="sc">|</span>data1<span class="sc">$</span>SMOKESTATUS2<span class="sc">==</span><span class="dv">12</span>] <span class="ot">&lt;-</span><span class="dv">3</span></span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>SMOKESTATUS2 [data1<span class="sc">$</span>SMOKESTATUS2 <span class="sc">==</span> <span class="dv">20</span> ] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>SMOKESTATUS2 [data1<span class="sc">$</span>SMOKESTATUS2 <span class="sc">==</span> <span class="dv">30</span> ] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>SMOKESTATUS2 [data1<span class="sc">$</span>SMOKESTATUS2 <span class="sc">&gt;</span> <span class="dv">30</span> ] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Worry, nervous, or anxious frequency: WORFREQ. 1 Daily, 2 weekly, 3 Monthly, 4 a few times a year, 5 Never</span></span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>WORFREQ [data1<span class="sc">$</span>WORFREQ <span class="sc">==</span><span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>WORFREQ <span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>WORFREQ <span class="sc">==</span><span class="dv">8</span><span class="sc">|</span>data1<span class="sc">$</span>WORFREQ <span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Depression frequency: DEPFREQ. 1 Daily, 2 weekly, 3 Monthly, 4 a few times a year, 5 Never</span></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>DEPFREQ[data1<span class="sc">$</span>DEPFREQ<span class="sc">==</span><span class="dv">0</span><span class="sc">|</span>data1<span class="sc">$</span>DEPFREQ<span class="sc">==</span><span class="dv">7</span><span class="sc">|</span>data1<span class="sc">$</span>DEPFREQ<span class="sc">==</span><span class="dv">8</span><span class="sc">|</span>data1<span class="sc">$</span>DEPFREQ<span class="sc">==</span><span class="dv">9</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="viewing-data" class="level1">
+<h1>Viewing data</h1>
+<p><em>Let’s check to confirm all of our re-categorizations look right.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR          SERIAL          STRATA          PSU       
+ Min.   :2012   Min.   :    1   Min.   : 100   Min.   :  1.0  
+ 1st Qu.:2013   1st Qu.:12326   1st Qu.:6060   1st Qu.:  1.0  
+ Median :2015   Median :24618   Median :6212   Median :  2.0  
+ Mean   :2016   Mean   :25791   Mean   :5577   Mean   : 15.5  
+ 3rd Qu.:2017   3rd Qu.:38527   3rd Qu.:7108   3rd Qu.: 22.0  
+ Max.   :2021   Max.   :60347   Max.   :7151   Max.   :164.0  
+                                                              
+   NHISHID            NHISPID               AGE             SEX       
+ Length:792916      Length:792916      Min.   : 0.00   Min.   :1.000  
+ Class :character   Class :character   1st Qu.:18.00   1st Qu.:1.000  
+ Mode  :character   Mode  :character   Median :39.00   Median :2.000  
+                                       Mean   :38.88   Mean   :1.518  
+                                       3rd Qu.:58.00   3rd Qu.:2.000  
+                                       Max.   :85.00   Max.   :2.000  
+                                       NA's   :237     NA's   :17     
+    RACENEW          HISPYN          ARMFEV            EDUC      EMPSTAT      
+ Min.   :1.000   Min.   :1.000   Min.   :1.00     Min.   :5   Min.   :1.00    
+ 1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.00     1st Qu.:5   1st Qu.:2.00    
+ Median :1.000   Median :1.000   Median :1.00     Median :5   Median :2.00    
+ Mean   :1.358   Mean   :1.196   Mean   :1.09     Mean   :5   Mean   :2.19    
+ 3rd Qu.:1.000   3rd Qu.:1.000   3rd Qu.:1.00     3rd Qu.:5   3rd Qu.:3.00    
+ Max.   :4.000   Max.   :2.000   Max.   :2.00     Max.   :5   Max.   :3.00    
+ NA's   :30702                   NA's   :193590               NA's   :195428  
+    PAIDSICK        INCFAM07ON       POVERTY          HEALTH     
+ Min.   :1.0      Min.   :2       Min.   :11.00   Min.   :1.000  
+ 1st Qu.:1.0      1st Qu.:2       1st Qu.:23.00   1st Qu.:1.000  
+ Median :2.0      Median :2       Median :33.00   Median :2.000  
+ Mean   :1.6      Mean   :2       Mean   :34.49   Mean   :2.138  
+ 3rd Qu.:2.0      3rd Qu.:2       3rd Qu.:37.00   3rd Qu.:3.000  
+ Max.   :2.0      Max.   :2       Max.   :99.00   Max.   :5.000  
+ NA's   :529063   NA's   :37743                   NA's   :867    
+     BMICAT          USUALPL         DELAYCOST      HINOTCOVE    
+ Min.   :1.0      Min.   :1.0      Min.   :1.00   Min.   :1.000  
+ 1st Qu.:2.0      1st Qu.:2.0      1st Qu.:1.00   1st Qu.:2.000  
+ Median :3.0      Median :2.0      Median :1.00   Median :2.000  
+ Mean   :2.9      Mean   :1.9      Mean   :1.07   Mean   :1.888  
+ 3rd Qu.:4.0      3rd Qu.:2.0      3rd Qu.:1.00   3rd Qu.:2.000  
+ Max.   :4.0      Max.   :2.0      Max.   :2.00   Max.   :2.000  
+ NA's   :482690   NA's   :374372   NA's   :1109   NA's   :6898   
+   VACFLU12M         ASTHMAEV         CANCEREV        CHEARTDIEV    
+ Min.   :1.0      Min.   :1.0      Min.   :1.0      Min.   :1.0     
+ 1st Qu.:1.0      1st Qu.:1.0      1st Qu.:1.0      1st Qu.:1.0     
+ Median :1.0      Median :1.0      Median :1.0      Median :1.0     
+ Mean   :1.5      Mean   :1.1      Mean   :1.1      Mean   :1.1     
+ 3rd Qu.:2.0      3rd Qu.:1.0      3rd Qu.:1.0      3rd Qu.:1.0     
+ Max.   :2.0      Max.   :2.0      Max.   :2.0      Max.   :8.0     
+ NA's   :380409   NA's   :372353   NA's   :475525   NA's   :475902  
+    ALCSTAT1       SMOKESTATUS2      WORFREQ          DEPFREQ      
+ Min.   :1.0      Min.   :0.000   Min.   :1.0      Min.   :1.0     
+ 1st Qu.:2.0      1st Qu.:0.000   1st Qu.:3.0      1st Qu.:4.0     
+ Median :3.0      Median :0.000   Median :4.0      Median :5.0     
+ Mean   :2.5      Mean   :0.618   Mean   :3.7      Mean   :4.3     
+ 3rd Qu.:3.0      3rd Qu.:1.000   3rd Qu.:5.0      3rd Qu.:5.0     
+ Max.   :3.0      Max.   :3.000   Max.   :5.0      Max.   :5.0     
+ NA's   :540783   NA's   :3304    NA's   :572936   NA's   :573140  
+  CVDTESTRSLT    
+ Min.   :1.0     
+ 1st Qu.:1.0     
+ Median :1.0     
+ Mean   :1.2     
+ 3rd Qu.:1.0     
+ Max.   :2.0     
+ NA's   :766477  </code></pre>
+</div>
+</div>
+</section>
+<section id="removing-na-values" class="level1">
+<h1>Removing NA values</h1>
+<p><em>Now let’s remove observations with NA values.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="renaming-variables" class="level1">
+<h1>Renaming variables</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">rename</span>(data1, <span class="at">age =</span> AGE, <span class="at">sex =</span> SEX, <span class="at">race =</span> RACENEW, <span class="at">hispanic =</span> HISPYN, <span class="at">veteran_status =</span> ARMFEV, <span class="at">education =</span> EDUC, <span class="at">employ_status =</span> EMPSTAT, <span class="at">paid_sick =</span> PAIDSICK, <span class="at">fam_income =</span> INCFAM07ON, <span class="at">pov_ratio =</span> POVERTY, <span class="at">health_status =</span> HEALTH, <span class="at">bmi =</span> BMICAT, <span class="at">med_access =</span> USUALPL, <span class="at">med_care_delayed_cost =</span> DELAYCOST, <span class="at">health_ins_status =</span> HINOTCOVE, <span class="at">flu_vaccine =</span> VACFLU12M, <span class="at">asthma =</span> ASTHMAEV, <span class="at">cancer =</span> CANCEREV, <span class="at">chd =</span> CHEARTDIEV, <span class="at">alcohol_status =</span> ALCSTAT1, <span class="at">smoking_status =</span> SMOKESTATUS2, <span class="at">worry_freq =</span> WORFREQ, <span class="at">dep_freq =</span> DEPFREQ, <span class="at">covid =</span> CVDTESTRSLT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="check-new-variable-names" class="level1">
+<h1>Check new variable names</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "YEAR"                  "SERIAL"                "STRATA"               
+ [4] "PSU"                   "NHISHID"               "NHISPID"              
+ [7] "age"                   "sex"                   "race"                 
+[10] "hispanic"              "veteran_status"        "education"            
+[13] "employ_status"         "paid_sick"             "fam_income"           
+[16] "pov_ratio"             "health_status"         "bmi"                  
+[19] "med_access"            "med_care_delayed_cost" "health_ins_status"    
+[22] "flu_vaccine"           "asthma"                "cancer"               
+[25] "chd"                   "alcohol_status"        "smoking_status"       
+[28] "worry_freq"            "dep_freq"              "covid"                </code></pre>
+</div>
+</div>
+</section>
+<section id="converting-some-variables-to-characters" class="level1">
+<h1>Converting some variables to characters</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="dv">8</span><span class="sc">:</span><span class="dv">30</span>), as.character)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="renaming-factor-levels" class="level1">
+<h1>Renaming factor levels</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#recode sex variable</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>sex, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"male"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"female"</span>))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#recode race variable</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">race =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>race, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"white"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"native american"</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"asian"</span>))</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#recode hispanic variable</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">hispanic =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>hispanic, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"non-hispanic"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"hispanic"</span>))</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="co">#recode veteran_status variable</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">veteran_status =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>veteran_status, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"non-veteran"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"veteran"</span>))</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co">#recode education variable</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">education =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>education, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"less_than_hs"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"high_school"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"some_college"</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"bachelor"</span>, <span class="st">`</span><span class="at">5</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"graduate"</span>))</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="co">#recode employment status variable</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">employ_status =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>employ_status, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"unemployed"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"employed"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"retired"</span>))</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="co">#recode paid sick leave variable</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">paid_sick =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>paid_sick, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="co">#recode household income variable</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">fam_income =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>fam_income, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"&lt; $50,000"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"$50,000-$99,999"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"$100,000+"</span>))</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="co">#recode health status variable</span></span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">health_status =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>health_status, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"excellent"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"very_good"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"good"</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"fair"</span>, <span class="st">`</span><span class="at">5</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"poor"</span>))</span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a><span class="co">#recode bmi variable</span></span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">bmi =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>bmi, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"underweight"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"average"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"overweight"</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"obese"</span>))</span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a><span class="co">#recode variable on usual place for accessing medical care </span></span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">med_access =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>med_access, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a><span class="co">#recode variable on medical care delayed due to cost</span></span>
+<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">med_care_delayed_cost =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>med_care_delayed_cost, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-49"><a href="#cb24-49" aria-hidden="true" tabindex="-1"></a><span class="co">#recode health insurance coverage variable</span></span>
+<span id="cb24-50"><a href="#cb24-50" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">health_ins_status =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>health_ins_status, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-52"><a href="#cb24-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-53"><a href="#cb24-53" aria-hidden="true" tabindex="-1"></a><span class="co">#recode flu vaccine variable</span></span>
+<span id="cb24-54"><a href="#cb24-54" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">flu_vaccine =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>flu_vaccine, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-57"><a href="#cb24-57" aria-hidden="true" tabindex="-1"></a><span class="co">#recode COVID variable</span></span>
+<span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-59"><a href="#cb24-59" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">covid =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>covid, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-60"><a href="#cb24-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-61"><a href="#cb24-61" aria-hidden="true" tabindex="-1"></a><span class="co">#recode asthma variable</span></span>
+<span id="cb24-62"><a href="#cb24-62" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-63"><a href="#cb24-63" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">asthma =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>asthma, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-64"><a href="#cb24-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-65"><a href="#cb24-65" aria-hidden="true" tabindex="-1"></a><span class="co">#recode cancer variable</span></span>
+<span id="cb24-66"><a href="#cb24-66" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-67"><a href="#cb24-67" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">cancer =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>cancer, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-68"><a href="#cb24-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-69"><a href="#cb24-69" aria-hidden="true" tabindex="-1"></a><span class="co">#recode heart disease variable</span></span>
+<span id="cb24-70"><a href="#cb24-70" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-71"><a href="#cb24-71" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">chd =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>chd, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"no"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"yes"</span>))</span>
+<span id="cb24-72"><a href="#cb24-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-73"><a href="#cb24-73" aria-hidden="true" tabindex="-1"></a><span class="co">#recode alcohol variable</span></span>
+<span id="cb24-74"><a href="#cb24-74" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-75"><a href="#cb24-75" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">alcohol_status =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>alcohol_status, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"nondrinker"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"former_drinker"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"drinker"</span>))</span>
+<span id="cb24-76"><a href="#cb24-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-77"><a href="#cb24-77" aria-hidden="true" tabindex="-1"></a><span class="co">#recode smoking variable</span></span>
+<span id="cb24-78"><a href="#cb24-78" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-79"><a href="#cb24-79" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">smoking_status =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>smoking_status, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"nonsmoker"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"former_smoker"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"smoker"</span>))</span>
+<span id="cb24-80"><a href="#cb24-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-81"><a href="#cb24-81" aria-hidden="true" tabindex="-1"></a><span class="co">#recode worry frequency variable</span></span>
+<span id="cb24-82"><a href="#cb24-82" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-83"><a href="#cb24-83" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">worry_freq =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>worry_freq, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"daily"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"weekly"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"monthly"</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"few_per_year"</span>, <span class="st">`</span><span class="at">5</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"never"</span>))</span>
+<span id="cb24-84"><a href="#cb24-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-85"><a href="#cb24-85" aria-hidden="true" tabindex="-1"></a><span class="co">#recode depression frequency variable</span></span>
+<span id="cb24-86"><a href="#cb24-86" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> </span>
+<span id="cb24-87"><a href="#cb24-87" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">dep_freq =</span> <span class="fu">recode_factor</span>(data1<span class="sc">$</span>dep_freq, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"daily"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"weekly"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"monthly"</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"few_per_year"</span>, <span class="st">`</span><span class="at">5</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"never"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="creating-a-new-dataframe-without-the-covid-variable" class="level3">
+<h3 class="anchored" data-anchor-id="creating-a-new-dataframe-without-the-covid-variable">Creating a new dataframe without the COVID variable</h3>
+<p><em>Because we only have COVID-19 information for 2020 and 2021, we will omit that variable.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data1[,<span class="sc">-</span><span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="check-all-factors-and-variables" class="level1">
+<h1>Check all factors and variables</h1>
+<p><em>Now is a good time to ensure you do not have any unexpected values in the factors or variables.</em></p>
+</section>
+<section id="creating-a-new-file-for-processed-data" class="level1">
+<h1>Creating a new file for processed data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>processeddata <span class="ot">&lt;-</span> data1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="saving-the-processed-data" class="level1">
+<h1>Saving the processed data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>save_data_location <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed_data"</span>,<span class="st">"processeddata.rds"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(processeddata, <span class="at">file =</span> save_data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

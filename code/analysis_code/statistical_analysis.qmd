@@ -1,0 +1,244 @@
+---
+title: "Model Fitting"
+author: "Chris Okitondo and Irene Cavros"
+date: "03/13/2023"
+output: html_document
+---
+
+In this section, we will undergo the following two tasks:
+
+-   Fit various bivariate logistic models to the categorical outcome (taking the flu vaccine) with individual important predictors of interest.
+
+-   Fit logistic models to the categorical outcome (taking the flu vaccine) using all (important) predictors of interest.
+
+### Setup
+
+```{r, warning=FALSE, message=FALSE}
+#load needed packages. make sure they are installed.
+library(here) #for data loading/saving
+library(dplyr)
+library(skimr)
+library(ggplot2)
+library(tidyverse)
+library(tidymodels)
+library(performance)
+library(gtsummary)
+```
+
+### Load data
+
+```{r}
+#Path to data. 
+data_location <- here::here("data","processed_data","processeddata.rds")
+#load data
+mydata <- readRDS(data_location)
+```
+
+
+### Take another quick look at the data
+
+```{r}
+glimpse(mydata)
+```
+
+### Ensure we are ignoring the NA values in the dataset
+```{r}
+mydata2 <- na.omit(mydata)
+```
+
+### Check variable names
+
+```{r}
+names(mydata2)
+```
+
+
+### Convert scientific notation into decimals
+
+*This will help us more easily determine which variables are significant.*
+
+```{r}
+options(digits=4)
+```
+
+### Set up logistic regression
+
+```{r}
+log_mod <- logistic_reg() %>%
+  set_engine("glm")
+```
+
+# Fitting bivariate logistic models
+
+### Using flu uptake as the outcome and age as predictor
+
+```{r}
+log_fit_age <- log_mod %>% fit(as.factor(flu_vaccine) ~ age, data = mydata2)
+tidy(log_fit_age, exponentiate = TRUE)
+```
+
+### Using flu uptake as the outcome and sex as predictor
+
+```{r}
+log_fit_sex <- log_mod %>% fit(as.factor(flu_vaccine) ~ sex, data = mydata2)
+tidy(log_fit_sex, exponentiate = TRUE)
+```
+
+### Using flu uptake as the outcome and race as predictor
+
+```{r}
+log_fit_race <- log_mod %>% fit(as.factor(flu_vaccine) ~ race, data = mydata2)
+tidy(log_fit_race, exponentiate = TRUE)
+```
+
+*This shows that the black population and Native Americans are less likely to take the flu vaccine compared to white people. However, asians are more likely to take the flu vaccine compared to whites.*
+
+### Using flu uptake as the outcome and education as predictor
+
+```{r}
+log_fit_education <- log_mod %>% fit(as.factor(flu_vaccine) ~ education, data = mydata2)
+tidy(log_fit_education, exponentiate = TRUE)
+```
+
+*This results show that the higher the degree someone has, the more likely they are to take the flu vaccine.*
+
+
+### Using flu uptake as outcome and family income as predictor
+
+```{r}
+log_fit_fam_income <- log_mod %>% fit(as.factor(flu_vaccine) ~ fam_income, data = mydata2)
+tidy(log_fit_fam_income, exponentiate = TRUE)
+```
+
+*The results show that the higher their income, the greater the likelihood for someone to take the flu vaccine.*
+
+### Using flu uptake as outcome and health insurance status as predictor
+
+```{r}
+log_fit_health_ins <- log_mod %>% fit(as.factor(flu_vaccine) ~ health_ins_status, data = mydata2)
+tidy(log_fit_health_ins, exponentiate = TRUE)
+```
+
+*Those with insurance coverage are more likely to take the flu vaccine.*
+
+### Using flu uptake as outcome and medical care access as predictor
+
+```{r}
+log_fit_medical_care <- log_mod %>% fit(as.factor(flu_vaccine) ~ med_access, data = mydata2)
+tidy(log_fit_medical_care, exponentiate = TRUE)
+```
+
+*If they have at least one usual place to seek medical care, they are more likely to take the flu vaccine.*
+
+```{r}
+names(mydata2)
+```
+
+# Fitting multivariate logistic models
+
+### Categorical outcome as flu vaccine with some demographic variables as predictors of interest
+
+```{r}
+log_fit_dems <- log_mod %>% fit(as.factor(flu_vaccine) ~ age + sex + race + hispanic + education + fam_income, data = mydata2)
+
+dems_model <- tidy(log_fit_dems, exponentiate = TRUE, conf.int = TRUE)
+dems_model
+
+
+```
+
+### Putting model with demographics in table format and saving it
+```{r}
+log_fit_dems <- log_mod %>% fit(as.factor(flu_vaccine) ~ age + sex + race + hispanic + education + fam_income, data = mydata2)
+
+ dems_model <- tidy(log_fit_dems,  exponentiate = TRUE, conf.int = TRUE) %>% 
+  select(term, estimate, conf.low,  conf.high, p.value) %>% 
+  mutate('Odds ratio' = estimate) %>% 
+  select(term, 'Odds ratio', conf.low,  conf.high, p.value)
+
+ dems_model
+ 
+ saveRDS(dems_model, file = (here("results", "demographics_model.rds")))
+```
+
+
+### Categorical outcome as flu vaccine with asthma, cancer, and CHD as predictors of interest
+
+```{r}
+log_fit_medical_cond <- log_mod %>% fit(as.factor(flu_vaccine) ~  asthma+ chd + cancer, data = mydata2)
+
+tidy(log_fit_medical_cond, exponentiate = TRUE)
+```
+
+
+### Categorical outcome as flu vaccine with smoking and alcohol status as predictors of interest
+
+```{r}
+log_fit_health_behaviors <- log_mod %>% fit(as.factor(flu_vaccine) ~  smoking_status+ alcohol_status, data = mydata2)
+
+tidy(log_fit_health_behaviors, exponentiate = TRUE)
+```
+
+*This results show that former smokers and former drinkers are more likely to get the flu vaccine compared to the population who never smoked or drank. The active smokers are less likely to take the vaccine compared to those who do not drink. There was no statistical difference between the active drinkers and those who do not drink in terms of their vaccine uptake.*
+
+### Categorical outcome as flu vaccine with smoking and alcohol as predictors of interest
+
+```{r}
+log_fit_full <- log_mod %>% fit(as.factor(flu_vaccine) ~  age + sex + race + hispanic + education + fam_income + asthma + cancer +  smoking_status+ alcohol_status, data = mydata2)
+
+tidy(log_fit_full, exponentiate = TRUE)
+
+
+```
+
+```{r}
+log_fit_full <- log_mod %>% fit(as.factor(flu_vaccine) ~  age + sex + race + hispanic + education + fam_income + asthma + cancer +  smoking_status+ alcohol_status, data = mydata2)
+
+
+ full_model <- tidy(log_fit_full,  exponentiate = TRUE, conf.int = TRUE) %>% 
+  select(term, estimate, conf.low,  conf.high, p.value) %>% 
+  mutate('Odds ratio' = estimate) %>% 
+  select(term, 'Odds ratio', conf.low,  conf.high, p.value)
+
+ full_model
+ 
+ saveRDS(dems_model_tbl, file = (here("results", "full_model.rds")))
+```
+
+*The results show that those who graduated from high school did not statistically differ from those who never graduated for their flu vaccine uptake. Also, current drinkers did not statically differ from those who never drank. All other predictors were found statistically significant.*
+
+
+## Model Performance Comparison
+```{r}
+# Comparing all the above models on the basis of model performance
+model_performance <- compare_performance(log_fit_age, log_fit_dems, log_fit_education, log_fit_medical_care, log_fit_fam_income, log_fit_health_behaviors, log_fit_sex, log_fit_race)
+model_performance
+
+
+```
+
+
+
+```{r}
+# Saving results of model performance 
+saveRDS(model_performance, file = (here("results", "model_performance_comparison.rds")))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

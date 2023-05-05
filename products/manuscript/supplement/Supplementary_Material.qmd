@@ -1,0 +1,38 @@
+---
+title: "Supplementary Materials"
+
+subtitle: ""
+author: Irene Cavros and Chris Okitondo
+date: 02/24/2023
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    highlight-style: github
+bibliography: ../../dataanalysis_template_references.bib
+csl: ../../vancouver.csl
+---
+
+# Overview
+
+This will later include materials that will be included as a supplementary file.
+
+# Code and file information
+
+Here we will explain what each code/file is and does, and in which order (if any) users need to run thing to reproduce everything.
+
+# Additional Method Details
+
+Greater detail into the specifics of our methodology will be added here in the future.
+
+# Additional results
+
+In the future we will show additional results here that didn't make it into the main text.
+
+# Discussion
+
+This section will include any discussion of our additional results and methods described above.
+
+# References
+
+This section will have a full bibliography with all of our project's references.

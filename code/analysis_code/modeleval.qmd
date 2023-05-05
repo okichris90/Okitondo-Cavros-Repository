@@ -1,0 +1,163 @@
+---
+title: "Model Evaluation"
+author: "Chris Okitondo And Irene Cavros"
+date: "04/06/2023"
+output: html_document
+---
+
+### Loading necessary packages
+```{r, message=FALSE, warning=FALSE}
+library(here)
+library(tidyverse)
+library(tidymodels)
+library(performance)
+library(dplyr)
+library(skimr)
+```
+
+
+### Loading previously processed data
+```{r}
+#Path to data. 
+data_location <- here::here("data","processed_data","processeddata.rds")
+#load data
+mydata <- readRDS(data_location)
+```
+
+
+### Ensure we are ignoring the NA values in the dataset
+```{r}
+mydata <- na.omit(mydata)
+```
+
+
+### Data splitting
+* Here, we are splitting our data into two subsets. 3/4 for the training and 1/4 for test.
+```{r}
+# To maintain reproducible results when re-done.
+set.seed(1234) 
+
+# Proceeding with 75% for training and 25% for test data
+split <- initial_split(mydata, prop = 3/4)
+```
+
+#### Dataframe for the training and test data
+```{r}
+train_data <- training(split)
+test_data  <- testing(split)
+```
+
+* Training data set now contains 80235 observations while test data contains 26745.
+
+### Workflow creation and model fitting
+
+#### FULL MODEL: Creating recipe that fits a logistic model with flu_vaccine as the outcome and all the predictors of interest in the data 
+
+```{r, warning=FALSE, message=FALSE}
+# Outcome is flu_vaccine. The rest of variables are our predictors of interest
+# Recipe #1: flu_vaccine predicted by all predictors of interest
+flu_rec <- recipe(flu_vaccine ~ age + sex + race + hispanic + education + fam_income + asthma + cancer + chd + smoking_status+ alcohol_status, data = train_data)
+
+# Model: logistic regression using GLM engine
+flu_mod <- logistic_reg() %>% 
+                    set_engine("glm")
+
+# Workflow: Pairing model and recipe 
+flu_workflow <- workflow() %>% 
+  add_model(flu_mod) %>% 
+  add_recipe(flu_rec)
+# Pring workflow
+flu_workflow
+
+# Fitting the model to a training dataset
+flu_fit <- 
+ flu_workflow %>% 
+  fit(data = train_data)
+
+# Looking at the model output
+flu_fit %>% 
+  extract_fit_parsnip() %>% 
+  tidy()
+```
+
+
+
+#### FULL MODEL: USING trained workflow to predict unseen test data
+
+```{r, warning = FALSE, message=FALSE}
+# Using the trained workflow (flu_fit) to predict with the unseen test data
+predict(flu_fit, test_data)
+
+# Using argument() with the model plus test data for saving them together
+flu_aug <- 
+  augment(flu_fit, test_data)
+  
+flu_aug %>%
+  select(flu_vaccine, .pred_no, .pred_yes)
+  
+# Plotting ROC curve
+AUC_full_model <- flu_aug %>% 
+  roc_curve(truth = flu_vaccine, .pred_no) %>% 
+  autoplot()
+
+AUC_full_model
+# Using roc_auc() to get the estimates
+flu_aug %>% 
+  roc_auc(truth = flu_vaccine, .pred_no)
+```
+
+
+#### ALTERNATIVE MODEL: Outcome is still flu_vaccine and predictor is race 
+```{r, warning=FALSE, message=FALSE}
+# Using flu_vaccine as a categorical outcome of interest and race as main predictor
+flu_rec2 <- recipe(flu_vaccine ~ race, data = train_data)
+
+# Fitting the logistic model
+flu_mod2 <- logistic_reg() %>% 
+                    set_engine("glm")
+
+# Modelling workflow for pairing model and recipe 
+flu_workflow2 <- workflow() %>% 
+  add_model(flu_mod2) %>% 
+  add_recipe(flu_rec2)
+
+flu_workflow2
+# Using the resulting predictors for preparing recipe and training the model
+flu_fit2 <- 
+ flu_workflow2 %>% 
+  fit(data = train_data)
+
+# Pulling the fitted model object and using tidy() function for getting a tidy tibble of model coefficients
+flu_fit2 %>% 
+  extract_fit_parsnip() %>% 
+  tidy()
+```
+
+**ALTERNATIVE MODEL: USING TRAINED WORKFLOW TO PREDICT**
+
+```{r, warning = FALSE, message=FALSE}
+# Using the trained data to predict with the unseen test data
+predict(flu_fit2, test_data)
+
+# Using argument() with the model plus test data for saving them together
+flu_aug2 <- 
+  augment(flu_fit2, test_data)
+  
+flu_aug2 %>%
+  select(flu_vaccine, .pred_no, .pred_yes)
+  
+# Creating ROC curve and piping to the autoplot() method
+AUC_reduced_model <- flu_aug2 %>% 
+  roc_curve(truth = flu_vaccine, .pred_no) %>% 
+  autoplot()
+
+AUC_reduced_model
+# Estimating the area under the curve 
+flu_aug2 %>% 
+  roc_auc(truth = flu_vaccine, .pred_no)
+```
+
+Given this result, the full model using all variables of interest as predictors perform better the reduced model with only race as predictor. The full model as a ROC-AUC of 0.70 compared the reduced model with ROC-AUC of 0.53. Thus, we retain the full model.
+
+
+

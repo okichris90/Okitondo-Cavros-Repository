@@ -1,0 +1,341 @@
+---
+title: "Data Cleaning"
+author: "Chris Okitondo & Irene Cavros"
+date: "2023-02-20"
+output: html_document
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+### Setup
+
+*Load needed packages. Don't forget to make sure they are installed. If
+not, please install them before moving forward in attempting to run any
+code.*
+
+```{r, warning=FALSE, message=FALSE}
+library(readxl) #for loading Excel files
+library(writexl) #for writing Excel files
+library(haven) # for loading SPSS file
+library(dplyr) #for data processing/cleaning
+library(tidyr) #for data processing/cleaning
+library(skimr) #for nice visualization of data 
+library(here) #to set paths
+library(tidyverse)
+```
+
+### Data loading
+
+```{r}
+data_location <- here::here("data","raw_data","nhis_00015.sav")
+rawdata <- haven:: read_sav(data_location)
+data1<- rawdata
+```
+
+### Check data
+
+*We are checking the data using several methods.*
+
+```{r}
+dplyr::glimpse(data1)
+summary(data1)
+head(data1)
+skimr::skim(data1)
+lapply(data1, levels)
+```
+
+### Observations for each year: 2012-2021
+
+```{r}
+table(data1$YEAR)
+```
+
+### Variables for Analysis
+
+*Below is a summary of all of the variables in our dataset.*
+
+-   Demographics: age, sex, race, ethnicity, veteran status
+
+-   Socioeconomic status: education level, total combined family income,
+    employment status, paid sick leave as part of job benefits, ratio of
+    family income to poverty threshold
+
+-   General health: perceived health status, categorical BMI Conditions:
+    ever told had asthma, ever told had cancer, ever told had coronary
+    heart disease
+
+-   Health behaviors: alcohol drinking status, cigarette smoking status
+    Access to care: has usual place for medical care, medical care
+    delayed due to cost (past 12 months)
+
+-   Health insurance: health insurance coverage status Mental health:
+    anxiety level, depression level
+
+-   Flu vaccine: Had any flu vaccine, past 12 months. **THIS IS OUR
+    OUTCOME OF INTEREST!**
+
+### Re-categorizing variables
+
+*Here we will create the appropriate levels as we re-categorize
+variables.* *We will later rename some of the factor levels so that we
+do not have to remember or keep referring back to a data dictionary.*
+
+
+```{r}
+# Age
+data1$AGE[data1$AGE == 997 | data1$AGE == 998 | data1$AGE == 999] <- NA
+
+# Sex: 1 for Male and 2 for female, 7 or 9 for unknown
+data1$SEX[data1$SEX == 7 |  data1$SEX == 9] <- NA
+
+# Race: White:1, Black:2, American Indiana/Alaska Native:3, Asian: 4
+data1$RACENEW[data1$RACENEW == 100] <- 1
+data1$RACENEW[data1$RACENEW == 200] <- 2
+data1$RACENEW[data1$RACENEW == 300] <- 3
+data1$RACENEW[data1$RACENEW == 400] <- 4
+data1$RACENEW[data1$RACENEW > 400] <- NA
+
+# Hispanic: 1 for no, 2 for yes.
+data1$HISPYN[data1$HISPYN == 7 | data1$HISPYN == 8 | data1$HISPYN == 9] <- NA
+
+# Veteran status: 1 for no. 2 for yes
+data1$ARMFEV[data1$ARMFEV==10|data1$ARMFEV == 11 |data1$ARMFEV == 12 ] <- 1
+data1$ARMFEV[data1$ARMFEV == 20]  <- 2
+data1$ARMFEV[data1$ARMFEV==0|data1$ARMFEV==97|data1$ARMFEV ==98|data1$ARMFEV == 99 ]<-NA
+
+# EDUCATION: 1 for less than HS, 2 for HS, 3 for Some college, 4 for bachelor, 5 for graduate degree
+data1$EDUC[data1$EDUC >= 100  & data1$EDUC <= 116] <- 1
+data1$EDUC[data1$EDUC >= 200  & data1$EDUC <= 202] <- 2
+data1$EDUC[data1$EDUC >= 300  & data1$EDUC <= 303] <- 3
+data1$EDUC[data1$EDUC == 400] <- 4
+data1$EDUC[data1$EDUC >= 500 & data1$EDUC <= 505] <- 5
+data1$EDUC[data1$EDUC == 0 | data1$EDUC > 505] <- NA
+
+# EMPLOYMENT STATUS: 1 for not employed, 2 for employed, and 3 for not in labor force
+data1$EMPSTAT[data1$EMPSTAT == 200] <- 1
+data1$EMPSTAT[data1$EMPSTAT == 100  |  data1$EMPSTAT == 111 | data1$EMPSTAT == 112 | data1$EMPSTAT == 120] <- 2
+data1$EMPSTAT[data1$EMPSTAT ==220] <- 3
+data1$EMPSTAT[data1$EMPSTAT == 0  | data1$EMPSTAT ==900 | data1$EMPSTAT ==997 | data1$EMPSTAT ==998 | data1$EMPSTAT ==999] <- NA
+
+# PAID Sick: 1 for no, 2 for yes (0,9,8,7)
+data1$PAIDSICK[data1$PAIDSICK == 220] <- 3
+data1$PAIDSICK[data1$PAIDSICK == 0 | data1$PAIDSICK == 7 | data1$PAIDSICK == 8 | data1$PAIDSICK == 9] <- NA
+
+# INCOME: 0 - 49,999: 1, 50,000-99,999: 2, AND +100k: 3
+data1$INCFAM07ON[data1$INCFAM07ON >= 10  & data1$INCFAM07ON <= 12] <- 1
+data1$INCFAM07ON[data1$INCFAM07ON >= 22  & data1$INCFAM07ON <= 23] <- 2
+data1$INCFAM07ON[data1$INCFAM07ON == 24] <- 3
+data1$INCFAM07ON[data1$INCFAM07ON > 24] <- NA
+data1$INCFAM07ON[data1$INCFAM07ON == 20 | data1$INCFAM07ON == 21] <- NA
+
+# HEALTH STATUS: 1 Excellent, 2: Very good, 3: Good, 4: Fair, 5: Poor
+data1$HEALTH [data1$HEALTH  > 5] <- NA
+
+# BMI CAT: 1 for BMI < 18.5 (Underweight), 2 for 18.5 - 25 (Normalt), 3 for 25 - 30 (Overweight), 4 for >30 (Obese)
+data1$BMICAT [data1$BMICAT  == 0 | data1$BMICAT  == 9] <- NA
+
+# USUAL PLACE FOR MEDICAL CARE: 1 for no, 2 and 3 for yes
+data1$USUALPL[data1$USUALPL == 1] <- 1
+data1$USUALPL[data1$USUALPL == 2 | data1$USUALPL == 3] <- 2
+data1$USUALPL[data1$USUALPL==0 | data1$USUALPL==7| data1$USUALPL==8| data1$USUALPL==9] <- NA
+
+# Medical care delayed due to cost: 1 for no, 2 for yes
+data1$DELAYCOST[data1$DELAYCOST ==0 | data1$DELAYCOST ==7| data1$DELAYCOST ==8| data1$DELAYCOST==9] <- NA
+
+# Health insurance coverage: 1 for no, 2 for yes
+data1$HINOTCOVE[data1$HINOTCOVE == 2] <- 3
+data1$HINOTCOVE[data1$HINOTCOVE == 1] <- 2
+data1$HINOTCOVE[data1$HINOTCOVE == 3] <- 1
+data1$HINOTCOVE[data1$HINOTCOVE == 9] <- NA
+
+# Had flu vaccine, past 12 months
+data1$VACFLU12M [data1$VACFLU12M  == 0|data1$VACFLU12M  == 3 |data1$VACFLU12M ==7|data1$VACFLU12M ==8|data1$VACFLU12M ==9] <- NA
+
+# Had covid, according to test
+data1$CVDTESTRSLT [data1$CVDTESTRSLT  == 0|data1$CVDTESTRSLT  == 3 |data1$CVDTESTRSLT ==7|data1$CVDTESTRSLT ==8|data1$CVDTESTRSLT ==9] <- NA
+
+# Ever told has Asthma: ASTHMAEV: 1 for no, 2 for yes
+data1$ASTHMAEV[data1$ASTHMAEV == 0|data1$ASTHMAEV==7|data1$ASTHMAEV==9] <- NA
+
+# Ever told has Cancer: CANCEREV: 1 for no, 2 for yes
+data1$CANCEREV[data1$CANCEREV == 0|data1$CANCEREV==7|data1$CANCEREV==9] <- NA
+
+# Ever told has CHD: CHEARTDIEV 1 for no, 2 for yes
+data1$CHEARTDIEV[data1$CHEARTDIEV==0|data1$CHEARTDIEV==7|data1$CHEARTDIEV==9] <- NA
+
+# ALCSTAT1: Alcohol drinking: 1 for no drinker, 2 for former drinker, 3 for current drinker
+data1$ALCSTAT1 [data1$ALCSTAT1 ==0|data1$ALCSTAT1 ==9] <- NA
+
+# Smoking status: 1 for no smoker, 2 for former smoker, 3 for current smoker
+data1$SMOKESTATUS2[data1$SMOKESTATUS2 == 10|data1$SMOKESTATUS2  == 11|data1$SMOKESTATUS2==12] <-3
+data1$SMOKESTATUS2 [data1$SMOKESTATUS2 == 20 ] <- 2
+data1$SMOKESTATUS2 [data1$SMOKESTATUS2 == 30 ] <- 1
+data1$SMOKESTATUS2 [data1$SMOKESTATUS2 > 30 | data1$SMOKESTATUS2 ==0] <- NA
+
+# Worry, nervous, or anxious frequency: WORFREQ. 1 Daily, 2 weekly, 3 Monthly, 4 a few times a year, 5 Never
+data1$WORFREQ [data1$WORFREQ ==0|data1$WORFREQ ==7|data1$WORFREQ ==8|data1$WORFREQ ==9] <- NA
+
+# Depression frequency: DEPFREQ. 1 Daily, 2 weekly, 3 Monthly, 4 a few times a year, 5 Never
+data1$DEPFREQ[data1$DEPFREQ==0|data1$DEPFREQ==7|data1$DEPFREQ==8|data1$DEPFREQ==9] <- NA
+```
+
+
+
+*Let's check to confirm all of our re-categorizations look right.
+```{r}
+summary(data1)
+```
+
+### Renaming variables
+
+```{r}
+data1 <- rename(data1, age = AGE, sex = SEX, race = RACENEW, hispanic = HISPYN, veteran_status = ARMFEV, education = EDUC, employ_status = EMPSTAT, paid_sick = PAIDSICK, fam_income = INCFAM07ON, pov_ratio = POVERTY, health_status = HEALTH, bmi = BMICAT, med_access = USUALPL, med_care_delayed_cost = DELAYCOST, health_ins_status = HINOTCOVE, flu_vaccine = VACFLU12M, asthma = ASTHMAEV, cancer = CANCEREV, chd = CHEARTDIEV, alcohol_status = ALCSTAT1, smoking_status = SMOKESTATUS2, worry_freq	= WORFREQ, dep_freq = DEPFREQ, covid = CVDTESTRSLT)
+```
+
+
+
+### Check new variable names
+
+```{r}
+names(data1)
+```
+
+### Converting some variables to characters
+
+```{r}
+data1 <- data1 %>% 
+     mutate_at(c(8:30), as.character)
+```
+
+### Renaming factor levels
+```{r}
+#recode sex variable
+data1 <- data1 %>% 
+     mutate(sex = recode_factor(data1$sex, `1` = "male", `2` = "female"))
+
+#recode race variable
+data1 <- data1 %>% 
+     mutate(race = recode_factor(data1$race, `1` = "white", `2` = "black", `3` = "native american", `4` = "asian"))
+
+#recode hispanic variable
+data1 <- data1 %>% 
+     mutate(hispanic = recode_factor(data1$hispanic, `1` = "non-hispanic", `2` = "hispanic"))
+
+#recode veteran_status variable
+data1 <- data1 %>% 
+     mutate(veteran_status = recode_factor(data1$veteran_status, `1` = "non-veteran", `2` = "veteran"))
+
+#recode education variable
+data1 <- data1 %>% 
+     mutate(education = recode_factor(data1$education, `1` = "less_than_hs", `2` = "high_school", `3` = "some_college", `4` = "bachelor", `5` = "graduate"))
+
+#recode employment status variable
+data1 <- data1 %>% 
+     mutate(employ_status = recode_factor(data1$employ_status, `1` = "unemployed", `2` = "employed", `3` = "retired"))
+
+#recode paid sick leave variable
+data1 <- data1 %>% 
+     mutate(paid_sick = recode_factor(data1$paid_sick, `1` = "no", `2` = "yes"))
+
+#recode household income variable
+data1 <- data1 %>% 
+     mutate(fam_income = recode_factor(data1$fam_income, `1` = "< $50,000", `2` = "$50,000-$99,999", `3` = "$100,000+"))
+
+#recode health status variable
+data1 <- data1 %>% 
+     mutate(health_status = recode_factor(data1$health_status, `1` = "excellent", `2` = "very_good", `3` = "good", `4` = "fair", `5` = "poor"))
+
+#recode bmi variable
+data1 <- data1 %>% 
+     mutate(bmi = recode_factor(data1$bmi, `1` = "underweight", `2` = "average", `3` = "overweight", `4` = "obese"))
+
+#recode variable on usual place for accessing medical care 
+data1 <- data1 %>% 
+     mutate(med_access = recode_factor(data1$med_access, `1` = "no", `2` = "yes"))
+
+#recode variable on medical care delayed due to cost
+data1 <- data1 %>% 
+     mutate(med_care_delayed_cost = recode_factor(data1$med_care_delayed_cost, `1` = "no", `2` = "yes"))
+
+#recode health insurance coverage variable
+data1 <- data1 %>% 
+     mutate(health_ins_status = recode_factor(data1$health_ins_status, `1` = "no", `2` = "yes"))
+
+#recode flu vaccine variable
+data1 <- data1 %>% 
+     mutate(flu_vaccine = recode_factor(data1$flu_vaccine, `1` = "no", `2` = "yes"))
+
+#recode COVID variable
+data1 <- data1 %>% 
+     mutate(covid = recode_factor(data1$covid, `1` = "no", `2` = "yes"))
+
+#recode asthma variable
+data1 <- data1 %>% 
+     mutate(asthma = recode_factor(data1$asthma, `1` = "no", `2` = "yes"))
+
+#recode cancer variable
+data1 <- data1 %>% 
+     mutate(cancer = recode_factor(data1$cancer, `1` = "no", `2` = "yes"))
+
+#recode heart disease variable
+data1 <- data1 %>% 
+     mutate(chd = recode_factor(data1$chd, `1` = "no", `2` = "yes"))
+
+#recode alcohol variable
+data1 <- data1 %>% 
+     mutate(alcohol_status = recode_factor(data1$alcohol_status, `1` = "nondrinker", `2` = "former_drinker", `3` = "drinker"))
+
+#recode smoking variable
+data1 <- data1 %>% 
+     mutate(smoking_status = recode_factor(data1$smoking_status, `1` = "nonsmoker", `2` = "former_smoker", `3` = "smoker"))
+
+#recode worry frequency variable
+data1 <- data1 %>% 
+     mutate(worry_freq = recode_factor(data1$worry_freq, `1` = "daily", `2` = "weekly", `3` = "monthly", `4` = "few_per_year", `5` = "never"))
+
+#recode depression frequency variable
+data1 <- data1 %>% 
+     mutate(dep_freq = recode_factor(data1$dep_freq, `1` = "daily", `2` = "weekly", `3` = "monthly", `4` = "few_per_year", `5` = "never"))
+```
+
+
+### Creating a new dataframe without the COVID variable
+
+*Because we only have COVID-19 information for 2020 and 2021, we will
+omit that variable for now and probably use it for sensitivity analysis.*
+
+```{r}
+data1 <- data1[,-30]
+```
+
+
+
+### Check all factors and variables
+
+*Now is a good time to ensure you do not have any unexpected values in
+the factors or variables.*
+
+```{r}
+View(data1)
+```
+
+### Creating a new file for processed data
+
+```{r}
+processeddata <- data1
+```
+
+### Saving the processed data
+
+```{r}
+save_data_location <- here::here("data","processed_data","processeddata.rds")
+saveRDS(processeddata, file = save_data_location)
+```
+
+### Unliking ".RData"
+```{r}
+unlink(".RData")
+```
+
+

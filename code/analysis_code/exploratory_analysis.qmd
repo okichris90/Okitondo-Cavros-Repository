@@ -1,0 +1,273 @@
+---
+title: "Exploratory analysis"
+author: "Irene Cavros and Chris Okitondo"
+date: "02/24/2023"
+output: html_document
+---
+
+This Quarto file loads the cleaned data and does some exploring.
+
+As part of the exploratory analysis, we have produced plots, tables, and other summary quantities for some interesting aspects of our data.
+
+# Setup
+```{r, warning=FALSE, message=FALSE}
+library(here) #for data loading/saving
+library(dplyr)
+library(ggplot2)
+library(haven)
+library(gridExtra) # To combine plots
+library(gtsummary) # For producing table 1
+library("kableExtra") # For producing a nice table 1
+library(table1)
+```
+
+### Load the data
+
+```{r}
+#Path to data. Note the use of the here() package and not absolute paths
+data_location <- here::here("data","processed_data","processeddata.rds")
+#load data
+mydata <- readRDS(data_location)
+```
+
+### Double check that we are still ignoring the NA values in the dataset
+
+```{r}
+mydata2 <- na.omit(mydata)
+```
+
+# Data exploration through tables
+
+Showing a bit of code to produce and save a summary table.
+
+This uses a bit of code trickery to get things into the shape of a data frame (for easier saving/showing in manuscript)
+
+```{r}
+# looking at the data
+summary_df <- dplyr::glimpse(mydata2)
+# save to file
+summarytable_file = here("results", "summarytable.rds")
+saveRDS(summary_df, file = summarytable_file)
+```
+
+# Checking names of data
+```{r}
+names(mydata2)
+```
+
+
+## Box plots for the flu vaccine uptake and age
+
+```{r}
+p1 <- ggplot(mydata2, aes(x=flu_vaccine, y=age)) + 
+  geom_boxplot(fill = "#A8DADC") + scale_x_discrete(labels = c("No", "Yes")) +
+  labs(title = "Figure 1: Distribution of flu vaccine uptake by age", x = "Uptake of Flu Vaccine in the past 12 months", y = "Age") +  theme_classic() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title.x = element_text(size = 12, margin = margin(t = 12)),
+        axis.title.y = element_text(size = 12, margin = margin(r = 12)),
+        axis.text = element_text(size = 12),
+        legend.position = "none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+p1
+```
+
+### Saving the plot in the result folder
+```{r}
+figure_file = here("results","Figure 1: Age & flu uptake distribution.png")
+ggsave(filename = figure_file, plot=p1) 
+```
+
+### Uptake of flu vaccine by race
+```{r}
+p2 <- ggplot(mydata2, aes(x = flu_vaccine, fill = race)) +
+  geom_bar(position = "dodge", alpha = 0.8, color = "black") +
+  labs(title = "Figure 2: Distribution of flu vaccine uptake by race",
+       x = "Flu Vaccine Uptake in the Past 12 Months",
+       y = "Count") +
+  scale_x_discrete(labels = c("Did not take flu vaccine", "Did take flu vaccine")) +
+  scale_fill_manual(values = c("#A8DADC", "#F4A261", "#E76F51", "#E76F51"), labels = c("White", "Black", "Native American", "Asian")) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title.x = element_text(size = 12, margin = margin(t = 12)),
+        axis.title.y = element_text(size = 12, margin = margin(r = 12)),
+        axis.text = element_text(size = 12),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+p2
+```
+
+
+
+
+### Saving the plot in the result folder
+```{r}
+figure_file = here("results","race & flu uptake distribution.png")
+ggsave(filename = figure_file, plot=p2) 
+```
+
+### Flu vaccine by sex: 1 for no and 2 for yes
+```{r}
+p3 <- ggplot(mydata2, aes(x = flu_vaccine, fill = sex)) +
+  geom_bar(position = "dodge", alpha = 0.8, color = "black") +
+  labs(title = "Flu Vaccine Uptake by Sex",
+       x = "Flu Vaccine Uptake in the Past 12 Months",
+       y = "Count") +
+  scale_x_discrete(labels = c("Did not take flu vaccine", "Did take flu vaccine")) +
+  scale_fill_manual(values = c("#A8DADC", "#F4A261"), labels = c("Male", "Female")) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title.x = element_text(size = 12, margin = margin(t = 12)),
+        axis.title.y = element_text(size = 12, margin = margin(r = 12)),
+        axis.text = element_text(size = 12),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+p3
+```
+
+### Saving the plot in the result folder
+```{r}
+figure_file = here("results","sex & flu uptake distribution.png")
+ggsave(filename = figure_file, plot=p3) 
+```
+
+### Flu vaccine by smoking: 1 for nonsmoker, 2 for former smoker, 3 for current smoker
+```{r}
+p4 <- ggplot(mydata2, aes(x = flu_vaccine, fill = smoking_status)) +
+  geom_bar(position = "dodge", alpha = 0.8, color = "black") +
+  labs(title = "Flu Vaccine Uptake by Smoking Status",
+       x = "Flu Vaccine Uptake in the Past 12 Months",
+       y = "Count") +
+  scale_x_discrete(labels = c("Did not take flu vaccine", "Did take flu vaccine")) +
+  scale_fill_manual(values = c("#A8DADC", "#F4A261", "#E76F51"), labels = c("Nonsmoker", "Former Smoker", "Current Smoker")) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title.x = element_text(size = 12, margin = margin(t = 12)),
+        axis.title.y = element_text(size = 12, margin = margin(r = 12)),
+        axis.text = element_text(size = 12),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+p4
+```
+
+### Saving the plot in the result folder
+```{r}
+figure_file = here("results","smoking status & flu uptake distribution.png")
+ggsave(filename = figure_file, plot=p4) 
+```
+
+### Flu vaccine by health insurance status
+
+```{r}
+p5 <- ggplot(mydata2, aes(x = flu_vaccine, fill = health_ins_status)) +
+  geom_bar(position = "dodge", alpha = 0.8, color = "black") +
+  labs(title = "Flu Vaccine Uptake by Insurance Status",
+       x = "Flu Vaccine Uptake in the Past 12 Months",
+       y = "Count") +
+  scale_x_discrete(labels = c("Did not take flu vaccine", "Did take flu vaccine")) +
+  scale_fill_manual(values = c("#A8DADC", "#F4A261"), labels = c('Does not have health insurance', 'Does have health insurance')) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        axis.title.x = element_text(size = 12, margin = margin(t = 12)),
+        axis.title.y = element_text(size = 12, margin = margin(r = 12)),
+        axis.text = element_text(size = 12),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+p5
+```
+
+### Saving the plot in the result folder
+```{r}
+figure_file = here("results","Insurance status & flu uptake distribution.png")
+ggsave(filename = figure_file, plot=p5) 
+```
+
+
+## Tables for patients characteristics 
+
+**Table 1. Demographic Characteristics**
+
+```{r, warning=FALSE, message=FALSE}
+(table1(~ factor(sex) + age + factor(race) + factor(hispanic) | flu_vaccine, data=mydata2))
+```
+
+
+
+
+**Table 2. Socioeconomic Factors**
+
+```{r, warning=FALSE, message=FALSE}
+(table1(~ factor(education) + factor(fam_income) | flu_vaccine, data=mydata2))
+```
+
+**Table 3. Employment factors**
+
+```{r, warning=FALSE, message=FALSE}
+(table1(~ factor(employ_status) + factor(paid_sick) | flu_vaccine, data=mydata2))
+```
+
+**Table 4. Healthcare access**
+
+```{r, warning=FALSE, message=FALSE}
+(table1(~ factor(health_ins_status) + factor(med_access) + factor(med_care_delayed_cost) | flu_vaccine, data=mydata2))
+```
+
+
+
+**Table 5. Health status factors**
+
+```{r, warning=FALSE, message=FALSE}
+(table1(~ factor(health_status) + factor(bmi) + factor(asthma) + factor(cancer) + factor(chd) + factor(alcohol_status) + factor(smoking_status) | flu_vaccine, data=mydata2))
+```
+
+**Table 6. Mental health factors**
+
+```{r, warning=FALSE, message=FALSE}
+(table1(~factor(worry_freq) + factor(dep_freq) | flu_vaccine, data=mydata2))
+
+```
+
+
+## Full table for demogrophics characteristics
+```{r, warning=FALSE, message=FALSE}
+table_dems <- (table1(~ sex + age + race + hispanic + education + fam_income + employ_status + paid_sick + health_ins_status + med_access + med_care_delayed_cost + health_status + bmi + asthma + cancer + alcohol_status + smoking_status| flu_vaccine, data=mydata2))
+
+table_dems
+
+
+```
+
+### Making demographics table look nicer
+```{r}
+table_dems_v2 <- t1kable(table_dems)
+table_dems_v2
+```
+
+
+### Saving table 1 in the results section
+```{r}
+saveRDS(table_dems_v2, file = (here("results", "table1_demographics.rds")))
+```
+
+
+
+
+
+
